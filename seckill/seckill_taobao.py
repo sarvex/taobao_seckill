@@ -33,12 +33,10 @@ def default_chrome_path():
         if driver_dir:
             return os.path.abspath(os.path.join(driver_dir, "chromedriver.exe"))
 
-        raise Exception("The chromedriver drive path attribute is not found.")
-    else:
-        if driver_dir:
-            return os.path.abspath(os.path.join(driver_dir, "chromedriver"))
+    elif driver_dir:
+        return os.path.abspath(os.path.join(driver_dir, "chromedriver"))
 
-        raise Exception("The chromedriver drive path attribute is not found.")
+    raise Exception("The chromedriver drive path attribute is not found.")
 
 
 class ChromeDrive:
@@ -107,7 +105,7 @@ class ChromeDrive:
                         print("登陆失败, 刷新重试, 请尽快登陆!!!")
                         continue
             except Exception as e:
-                print(str(e))
+                print(e)
                 continue
 
     def keep_wait(self):
@@ -175,9 +173,8 @@ class ChromeDrive:
                     print("临时写的脚本, 可能出了点问题!!!")
 
             sleep(0.1)
-        if submit_succ:
-            if self.password:
-                self.pay()
+        if submit_succ and self.password:
+            self.pay()
 
 
     def pay(self):

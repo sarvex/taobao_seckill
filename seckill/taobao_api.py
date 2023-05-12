@@ -40,11 +40,10 @@ def get_buy_cart():
         'accept-encoding': 'gzip, deflate, br', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
         'cache-control': 'max-age=0'}
     res = session.get(url, headers = headers, verify = False)
-    first_data = re.search('try{var firstData = (.*?);}catch', res.text).group(1)
+    first_data = re.search('try{var firstData = (.*?);}catch', res.text)[1]
     s_tag = res.headers['s_tag']
-    user_rep = re.search('\|\^taoMainUser:(.*?):\^', s_tag)
-    if user_rep:
-        user_id = user_rep.group(1)
+    if user_rep := re.search('\|\^taoMainUser:(.*?):\^', s_tag):
+        user_id = user_rep[1]
         print("成功获取购物车信息")
     else:
         print("cookie失效，请重新登陆")
@@ -93,7 +92,7 @@ def confirm_order(cart_id, item_id, sku_id, seller_id, cart_params, attributes):
     data = {"item": f"{cart_id}_{item_id}_1_{sku_id}_{seller_id}_0_0_0_{cart_params}_{quote(str(attributes))}__0",
         "buyer_from": "cart", "source_time": "".join(str(int(time.time() * 1000)))}
     res = session.post(url = url, data = data, headers = headers, verify = False)
-    order_data = re.search('orderData= (.*?);\n</script>', res.text).group(1)
+    order_data = re.search('orderData= (.*?);\n</script>', res.text)[1]
     print("成功发送结算请求")
     return order_data
 
@@ -151,11 +150,11 @@ def submit_order(order_data, item_id, user_id):
 
 
 def parse_submit_data(data):
-    new_data = {}
-    for k, v in data.items():
-        if v.get('submit') == 'true' or v.get('submit'):
-            new_data[k] = v
-    return new_data
+    return {
+        k: v
+        for k, v in data.items()
+        if v.get('submit') == 'true' or v.get('submit')
+    }
 
 
 def run_with_selenium_cookie():
@@ -217,4 +216,3 @@ def run_with_browsercookie():
 
 if __name__ == '__main__':
     run_with_browsercookie()
-    pass

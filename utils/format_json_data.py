@@ -36,10 +36,7 @@ def change_str_to_json(str):
 
 def change_str_to_list(str):
     str_list = str.split('\n')
-    data = []
-    for str in str_list:
-        data.append(str)
-    return data
+    return list(str_list)
 
 
 if __name__ == "__main__":
